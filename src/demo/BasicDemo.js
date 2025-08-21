@@ -1,16 +1,9 @@
 import Keyboard from "../lib";
 import "./css/BasicDemo.css";
 
-const setDOM = () => {
-  document.querySelector("body").innerHTML = `
-    <input class="input" placeholder="Tap on the virtual keyboard to start" />
-    <div class="simple-keyboard"></div>
-  `;
-};
 
 class Demo {
   constructor() {
-    setDOM();
 
     /**
      * Demo Start
@@ -18,7 +11,6 @@ class Demo {
     this.keyboard = new Keyboard({
       onChange: this.onChange,
       onKeyPress: this.onKeyPress,
-      useMouseEvents: true
     });
 
     /**
@@ -40,7 +32,20 @@ class Demo {
     /**
      * If you want to handle the shift and caps lock buttons
      */
-    if (button === "{shift}" || button === "{lock}") this.handleShift();
+    if (button === "{shift}" || button === "{lock}") {
+      this.handleShift();
+      return;
+    }
+
+    if (button === "{numbers}") {
+      this.handleNumbers();
+      return;
+    }
+
+    if (button === "{abc}") {
+      this.handleABC();
+      return;
+    }
   }
 
   onKeyReleased = (button, e) => {
@@ -53,6 +58,22 @@ class Demo {
 
     this.keyboard.setOptions({
       layoutName: shiftToggle
+    });
+  }
+
+  handleNumbers = () => {
+    const currentLayout = this.keyboard.options.layoutName;
+
+    this.keyboard.setOptions({
+      layoutName: "numbers"
+    });
+  }
+
+  handleABC = () => {
+    const currentLayout = this.keyboard.options.layoutName;
+
+    this.keyboard.setOptions({
+      layoutName: "default"
     });
   }
 }

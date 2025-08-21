@@ -1,5 +1,7 @@
 import { KeyboardInput } from "./../interfaces";
 import { KeyboardOptions, UtilitiesParams } from "../interfaces";
+import { preprocessVN, VNMethod } from "./VietnamePreprocessor";
+import { backspace, shift } from "./Icons";
 
 /**
  * Utility Service
@@ -65,10 +67,10 @@ class Utilities {
    */
   getDefaultDiplay() {
     return {
-      "{bksp}": "backspace",
-      "{backspace}": "backspace",
+      "{bksp}": backspace,
+      "{backspace}": backspace,
       "{enter}": "< enter",
-      "{shift}": "shift",
+      "{shift}": shift,
       "{shiftleft}": "shift",
       "{shiftright}": "shift",
       "{alt}": "alt",
@@ -125,6 +127,9 @@ class Utilities {
       "{numpad7}": "7",
       "{numpad8}": "8",
       "{numpad9}": "9",
+      "{numbers}": "123",
+      "{abc}": "ABC",
+      "{ent}": "Enter",
     };
   }
   /**
@@ -219,8 +224,29 @@ class Utilities {
       output = this.addStringAt(output, ".", ...commonParams);
     else if (button === "{" || button === "}")
       output = this.addStringAt(output, button, ...commonParams);
-    else if (!button.includes("{") && !button.includes("}"))
-      output = this.addStringAt(output, button, ...commonParams);
+    else if (!button.includes("{") && !button.includes("}")) {
+      // Check if Vietnamese input method is enabled
+      const vietnameseMethod = options.vietnameseInputMethod || 'off';
+      
+      if (vietnameseMethod !== 'off') {
+        // Use Vietnamese preprocessor for Vietnamese input methods
+        const textBeforeCaret = caretPos != null ? output.slice(0, caretPos) : output;
+        const textAfterCaret = caretPos != null && caretPosEnd != null ? output.slice(caretPosEnd) : '';
+        
+        const vnResult = preprocessVN(textBeforeCaret, button, vietnameseMethod as VNMethod);
+        
+        if (vnResult.handled) {
+          // Vietnamese processing handled the input, use the processed result
+          output = vnResult.nextValue + textAfterCaret;
+        } else {
+          // Vietnamese processing didn't handle it, proceed with normal character addition
+          output = this.addStringAt(output, button, ...commonParams);
+        }
+      } else {
+        // Vietnamese input disabled, proceed with normal character addition
+        output = this.addStringAt(output, button, ...commonParams);
+      }
+    }
 
     if(options.debug){
       console.log("Input will be: "+ output);

@@ -1,4 +1,4 @@
-import "./css/Keyboard.css";
+import "./css/Keyboard.scss";
 
 import { getDefaultLayout } from "../services/KeyboardLayout";
 import PhysicalKeyboard from "../services/PhysicalKeyboard";
@@ -1998,6 +1998,8 @@ class SimpleKeyboard {
            * Adding button label to button
            */
           const buttonSpanDOM = document.createElement("span");
+          buttonSpanDOM.className = "hg-button-content";
+          buttonSpanDOM.setAttribute("data-skBtn", button);
           buttonSpanDOM.innerHTML = buttonDisplayName;
           buttonDOM.appendChild(buttonSpanDOM);
 

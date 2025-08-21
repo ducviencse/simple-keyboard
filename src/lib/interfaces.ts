@@ -276,6 +276,11 @@ export interface KeyboardOptions {
     clickOnMouseDown?: boolean;
 
     /**
+     * Vietnamese input method - supports telex, vni, auto, or off
+     */
+    vietnameseInputMethod?: 'off' | 'auto' | 'telex' | 'vni';
+
+    /**
      * Executes the callback function every time simple-keyboard is rendered (e.g: when you change layouts).
      */
      onRender?: (instance: SimpleKeyboard) => void;
